@@ -1,4 +1,4 @@
-import { OrderTable } from './orderTable'
+import { OrderTable } from '../components/orderTable'
 
 const OrdersList = () => {
     return (
