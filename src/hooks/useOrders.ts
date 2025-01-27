@@ -7,10 +7,13 @@ import { debounce } from 'lodash'
 export const useOrders = () => {
     const queryClient = useQueryClient()
 
+    // Prevent multiple error toasts from appearing
     const showErrorNotification = debounce((message: string) => {
         toast.error(message)
     }, 500)
 
+    // Main query to fetch all orders
+    // retries 3 times before giving up
     const ordersQuery = useQuery<Order[]>({
         queryKey: ['orders'],
         queryFn: api.getOrders,
@@ -21,6 +24,8 @@ export const useOrders = () => {
         showErrorNotification(`Failed to fetch orders: ${(ordersQuery.error as Error).message}`)
     }
 
+    // Get single order details
+    // only runs if id is provided
     const useOrderById = (id: number) => {
         const queryResult = useQuery<Order, Error>({
             queryKey: ['order', id],
@@ -36,6 +41,7 @@ export const useOrders = () => {
         return queryResult
     }
 
+    // Fetch available products for order creation/update
     const productsQuery = useQuery<Product[]>({
         queryKey: ['products'],
         queryFn: api.getProduct,
@@ -46,21 +52,8 @@ export const useOrders = () => {
         showErrorNotification(`Failed to fetch products: ${(productsQuery.error as Error).message}`)
     }
 
-    const searchOrdersQuery = (query: string) => {
-        const queryResult = useQuery<Order[], Error>({
-            queryKey: ['orders', query],
-            queryFn: () => api.searchOrders(query),
-            enabled: !!query,
-            retry: 3
-        })
-
-        if (queryResult.isError) {
-            showErrorNotification(`Search failed: ${(queryResult.error as Error).message}`)
-        }
-
-        return queryResult
-    }
-
+    // Mutation for creating new orders
+    // invalidates orders query to refetch updated list
     const createOrderMutation = useMutation<Order, Error, OrderRequest>({
         mutationFn: api.createOrder,
         onSuccess: () => {
@@ -72,6 +65,7 @@ export const useOrders = () => {
         retry: 3
     })
 
+    // Update existing order details
     const updateOrderMutation = useMutation<Order, Error, { id: number; data: OrderRequest }>({
         mutationFn: ({ id, data }) => api.updateOrder(id, data),
         onSuccess: () => {
@@ -83,6 +77,7 @@ export const useOrders = () => {
         retry: 3
     })
 
+    // Delete order mutation with success/error handling
     const deleteOrderMutation = useMutation<void, Error, number>({
         mutationFn: api.deleteOrder,
         onSuccess: () => {
@@ -101,7 +96,6 @@ export const useOrders = () => {
         isLoading: ordersQuery.isLoading,
         createOrder: createOrderMutation.mutate,
         updateOrder: updateOrderMutation.mutate,
-        deleteOrder: deleteOrderMutation.mutate,
-        searchOrders: searchOrdersQuery
+        deleteOrder: deleteOrderMutation.mutate
     }
 }

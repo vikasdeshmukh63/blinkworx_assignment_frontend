@@ -7,13 +7,16 @@ interface ConfirmModalProps {
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, onClose, onConfirm }) => {
+    // dnt render anything if modal is closed
     if (!isOpen) return null
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+                {/* title and subtitle  */}
                 <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
                 <p className="text-gray-700 mb-6">Are you sure you want to delete this item?</p>
+                {/* action button  */}
                 <div className="flex justify-end space-x-4">
                     <button
                         onClick={onClose}

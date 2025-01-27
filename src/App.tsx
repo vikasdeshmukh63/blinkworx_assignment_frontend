@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import CreateOrUpdate from './components/createOrUpdateOrder'
@@ -9,36 +9,38 @@ import { useOrders } from './hooks/useOrders'
 import { OrderRequest } from './types/types'
 
 const App: React.FC = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isOnline, setIsOnline] = useState(navigator.onLine)
     const { createOrder, updateOrder } = useOrders()
 
+    // setitng up network status listeners
     useEffect(() => {
+        // show success toast when network connects
         const handleOnline = () => {
-            setIsOnline(true)
             toast.success('Network connected!')
         }
 
+        // show error toast when network disconnects
         const handleOffline = () => {
-            setIsOnline(false)
             toast.error('No network connection!')
         }
 
+        // adding event listeners for network status
         window.addEventListener('online', handleOnline)
         window.addEventListener('offline', handleOffline)
 
+        // clearing up listeners on component unmount
         return () => {
             window.removeEventListener('online', handleOnline)
             window.removeEventListener('offline', handleOffline)
         }
     }, [])
 
+    // for creating new orders
     const handleCreateSubmit = (payload: OrderRequest) => {
         createOrder(payload)
     }
 
+    // for updating existing orders
     const handleEditSubmit = (payload: OrderRequest, id?: number) => {
-        console.log(id)
         if (id !== undefined) {
             updateOrder({ id, data: payload })
         }
@@ -47,10 +49,12 @@ const App: React.FC = () => {
     return (
         <BrowserRouter>
             <Routes>
+                {/* main orders listing page */}
                 <Route
                     path="/"
                     element={<OrdersList />}
                 />
+                {/* create new order page */}
                 <Route
                     path="/neworder"
                     element={
@@ -60,6 +64,7 @@ const App: React.FC = () => {
                         />
                     }
                 />
+                {/* edit existing order page */}
                 <Route
                     path="/order/:orderId"
                     element={
@@ -69,6 +74,7 @@ const App: React.FC = () => {
                         />
                     }
                 />
+                {/* 404 page for invalid routes */}
                 <Route
                     path="*"
                     element={<NotFound />}

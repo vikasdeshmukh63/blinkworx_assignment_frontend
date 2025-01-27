@@ -5,6 +5,7 @@ import { useOrders } from '../hooks/useOrders'
 import { OrderRequest } from '../types/types'
 import { FaShoppingCart } from 'react-icons/fa'
 
+// props interface for create/update form
 interface CreateOrUpdateProps {
     type: string
     onSubmit: (payload: OrderRequest, id?: number) => void
@@ -12,13 +13,19 @@ interface CreateOrUpdateProps {
 
 const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
     const { products, useOrderById } = useOrders()
+
+    const navigate = useNavigate()
+
+    // state management
     const [orderDescription, setOrderDescription] = useState('')
     const [selectedItem, setSelectedItem] = useState<number[]>([])
-    const navigate = useNavigate()
+
     const { orderId } = useParams<{ orderId?: string }>()
 
+    // get existing order data if in edit mode
     const { data: order, isSuccess } = useOrderById(orderId ? parseInt(orderId) : 0)
 
+    // populating form with existing data when its type edit
     useEffect(() => {
         if (type === CONSTANTS.EDIT && order && isSuccess) {
             setOrderDescription(order.orderDescription)
@@ -26,6 +33,7 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
         }
     }, [type, order, isSuccess])
 
+    // form submission for both create and edit
     const handleSubmit = () => {
         if (type === CONSTANTS.EDIT) {
             onSubmit({ orderDescription, productIds: selectedItem }, Number(orderId))
@@ -39,7 +47,9 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
         <div className="p-6 bg-gray-100 min-h-screen">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
                 <div className="flex justify-between items-center">
+                    {/* heading  */}
                     <h2 className="text-2xl font-bold mb-6">{type === CONSTANTS.CREATE ? 'New Order' : 'Edit Order'}</h2>
+                    {/* cart icon */}
                     <div className="relative">
                         <button className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200">
                             <FaShoppingCart />
@@ -52,7 +62,7 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
                     </div>
                 </div>
 
-                {/* Order Description */}
+                {/* order descpton */}
                 <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Order Description</label>
                     <textarea
@@ -64,6 +74,7 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
                     />
                 </div>
 
+                {/* select prdout*/}
                 <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Select Items</label>
                     <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -92,6 +103,7 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
                     </div>
                 </div>
 
+                {/* action buttons */}
                 <div className="flex justify-end space-x-4">
                     <button
                         onClick={() => navigate('/orders')}

@@ -7,7 +7,7 @@ import { Order } from '../types/types'
 import ConfirmModal from './confirmModal'
 import { SkeletonRow } from './skeletonRow'
 
-// Define the table headings
+// define the table headings
 const tableHeadings = [
     {
         key: 'id',
@@ -37,27 +37,35 @@ const tableHeadings = [
 ]
 
 export const OrderTable: React.FC = () => {
+    // custom hook to get orders and delete order
     const { orders, deleteOrder } = useOrders()
+
+    // state management
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-
     const openConfirmDelete = useBoolean()
 
     const navigate = useNavigate()
 
+    // custom hook to search orders
     const { data: searchResults, isLoading } = useSearchOrders(searchTerm)
+
+    // display orders based on search term
     const displayOrders = searchTerm ? searchResults || [] : orders
 
+    // handle search
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setSearchTerm(value)
     }
 
+    // handle delete
     const handleDelete = (data: Order) => {
         setSelectedOrder(data)
         openConfirmDelete.onTrue()
     }
 
+    // handle confirm delete
     const handleConfirmDelete = () => {
         if (selectedOrder) {
             deleteOrder(selectedOrder.id)
@@ -68,7 +76,9 @@ export const OrderTable: React.FC = () => {
     return (
         <div className="p-4">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                {/* title */}
                 <h1 className="text-2xl font-bold mb-4 md:mb-0">Order Management</h1>
+                {/* search input */}
                 <input
                     type="text"
                     placeholder="Search by Order ID or Description"
@@ -79,7 +89,9 @@ export const OrderTable: React.FC = () => {
             </div>
 
             <div className="overflow-x-auto shadow-lg rounded-lg">
+                {/* table  */}
                 <table className="w-full border-collapse bg-white  overflow-hidden">
+                    {/* table head  */}
                     <thead className="bg-gray-200">
                         <tr>
                             {tableHeadings.map((heading) => (
@@ -91,10 +103,13 @@ export const OrderTable: React.FC = () => {
                             ))}
                         </tr>
                     </thead>
+                    {/* table body  */}
                     <tbody>
+                        {/* loading skeleton */}
                         {isLoading ? (
                             Array.from({ length: 5 }).map((_, index) => <SkeletonRow key={index} />)
                         ) : displayOrders.length === 0 ? (
+                            // no orders found
                             <tr>
                                 <td
                                     colSpan={tableHeadings.length}
@@ -103,14 +118,20 @@ export const OrderTable: React.FC = () => {
                                 </td>
                             </tr>
                         ) : (
+                            // display orders
                             displayOrders.map((order) => (
                                 <tr
                                     key={order.id}
                                     className="hover:bg-gray-50 transition duration-200">
+                                    {/* order id  */}
                                     <td className="p-3 border-t text-sm text-gray-700">{order.id}</td>
+                                    {/* order description  */}
                                     <td className="p-3 border-t text-sm text-gray-700">{order.orderDescription}</td>
+                                    {/* count of products  */}
                                     <td className="p-3 border-t text-sm text-gray-700">{order.products.length}</td>
+                                    {/* created at  */}
                                     <td className="p-3 border-t text-sm text-gray-700">{new Date(order.createdAt).toLocaleString()}</td>
+                                    {/* action buttons  */}
                                     <td className="p-3 border-t text-sm">
                                         <button
                                             onClick={() => navigate(`/order/${order.id}`)}
@@ -131,14 +152,17 @@ export const OrderTable: React.FC = () => {
             </div>
 
             <div className="mt-4 flex justify-between item-center">
+                {/* new order button  */}
                 <button
                     onClick={() => navigate(`/neworder`)}
                     className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition duration-200">
                     New Order
                 </button>
+                {/* total order coutn  */}
                 <p>Total Orders: {displayOrders.length}</p>
             </div>
 
+            {/* confirm delete modal  */}
             <ConfirmModal
                 isOpen={openConfirmDelete.value}
                 onClose={openConfirmDelete.onFalse}
