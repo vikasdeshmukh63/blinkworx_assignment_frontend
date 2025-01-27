@@ -2,6 +2,9 @@
 
 A modern, responsive order management system built with React, TypeScript, and Vite. The application allows users to create, read, update, and delete orders while managing product associations.
 
+## Deployed URL
+```https://blinkworxassignment.netlify.app/```
+
 ## Features
 
 * **Order Management**
