@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-env es2022 */
-/* eslint-disable-next-line no-undef */
+ 
 
 export default {
     extends: ['@commitlint/cli', '@commitlint/config-conventional'],
