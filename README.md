@@ -119,3 +119,7 @@ project/
 * Responsive design patterns
 * Error boundary implementation
 * Loading state handling
+
+## Author
+
+Vikas Deshmukh
