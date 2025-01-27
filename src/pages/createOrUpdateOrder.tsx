@@ -106,7 +106,7 @@ const CreateOrUpdate: React.FC<CreateOrUpdateProps> = ({ type, onSubmit }) => {
                 {/* action buttons */}
                 <div className="flex justify-end space-x-4">
                     <button
-                        onClick={() => navigate('/orders')}
+                        onClick={() => navigate('/')}
                         className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-200">
                         Cancel
                     </button>
